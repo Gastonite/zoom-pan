@@ -34,7 +34,7 @@ const makeZoom = (state) => ({
     zoom: ({ x, y, deltaScale }) => {
         const { left, top } = state.element.getBoundingClientRect();
         const { minScale, maxScale, scaleSensitivity } = state;
-        const [ scale, newScale ] = getScale({ scale: state.transformation.scale, deltaScale, minScale, maxScale, scaleSensitivity });
+        const [scale, newScale] = getScale({ scale: state.transformation.scale, deltaScale, minScale, maxScale, scaleSensitivity });
         const originX = x - left;
         const originY = y - top;
         const newOriginX = originX / scale;
@@ -66,4 +66,14 @@ const renderer = ({ minScale, maxScale, element, scaleSensitivity = 10 }) => {
     return Object.assign({}, makeZoom(state), makePan(state));
 };
 
-module.exports = { renderer };
+module.exports = {
+    renderer,
+    hasPositionChanged,
+    valueInRange,
+    getTranslate,
+    getScale,
+    getMatrix,
+    pan,
+    makePan,
+    makeZoom,
+};

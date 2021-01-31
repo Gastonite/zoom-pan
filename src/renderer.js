@@ -1,28 +1,28 @@
-const hasPositionChanged = ({ pos, prevPos }) => pos !== prevPos;
+export const hasPositionChanged = ({ pos, prevPos }) => pos !== prevPos;
 
-const valueInRange = ({ minScale, maxScale, scale }) => scale <= maxScale && scale >= minScale;
+export const valueInRange = ({ minScale, maxScale, scale }) => scale <= maxScale && scale >= minScale;
 
-const getTranslate = ({ minScale, maxScale, scale }) => ({ pos, prevPos, translate }) =>
+export const getTranslate = ({ minScale, maxScale, scale }) => ({ pos, prevPos, translate }) =>
     valueInRange({ minScale, maxScale, scale }) && hasPositionChanged({ pos, prevPos })
         ? translate + (pos - prevPos * scale) * (1 - 1 / scale)
         : translate;
 
-const getScale = ({ scale, minScale, maxScale, scaleSensitivity, deltaScale }) => {
+export const getScale = ({ scale, minScale, maxScale, scaleSensitivity, deltaScale }) => {
     let newScale = scale + (deltaScale / (scaleSensitivity / scale));
     newScale = Math.max(minScale, Math.min(newScale, maxScale));
     return [scale, newScale];
 };
 
-const getMatrix = ({ scale, translateX, translateY }) => `matrix(${scale}, 0, 0, ${scale}, ${translateX}, ${translateY})`;
+export const getMatrix = ({ scale, translateX, translateY }) => `matrix(${scale}, 0, 0, ${scale}, ${translateX}, ${translateY})`;
 
-const pan = ({ state, originX, originY }) => {
+export const pan = ({ state, originX, originY }) => {
     state.transformation.translateX += originX;
     state.transformation.translateY += originY;
     state.element.style.transform =
         getMatrix({ scale: state.transformation.scale, translateX: state.transformation.translateX, translateY: state.transformation.translateY });
 };
 
-const makePan = (state) => ({
+export const makePan = (state) => ({
     panBy: ({ originX, originY }) => pan({ state, originX, originY }),
     panTo: ({ originX, originY, scale }) => {
         state.transformation.scale = scale;
@@ -30,7 +30,7 @@ const makePan = (state) => ({
     },
 });
 
-const makeZoom = (state) => ({
+export const makeZoom = (state) => ({
     zoom: ({ x, y, deltaScale }) => {
         const { left, top } = state.element.getBoundingClientRect();
         const { minScale, maxScale, scaleSensitivity } = state;
@@ -49,7 +49,7 @@ const makeZoom = (state) => ({
     }
 });
 
-const renderer = ({ minScale, maxScale, element, scaleSensitivity = 10 }) => {
+export const renderer = ({ minScale, maxScale, element, scaleSensitivity = 10 }) => {
     const state = {
         element,
         minScale,
@@ -64,16 +64,4 @@ const renderer = ({ minScale, maxScale, element, scaleSensitivity = 10 }) => {
         },
     };
     return Object.assign({}, makeZoom(state), makePan(state));
-};
-
-module.exports = {
-    renderer,
-    hasPositionChanged,
-    valueInRange,
-    getTranslate,
-    getScale,
-    getMatrix,
-    pan,
-    makePan,
-    makeZoom,
 };

@@ -1,5 +1,5 @@
-const test = require('ava')
-const {renderer} = require('./renderer.js')
+import test from 'ava'
+import { renderer } from './renderer.js'
 
 
 
